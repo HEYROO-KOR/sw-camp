@@ -2,45 +2,69 @@ const icon = document.querySelector('.icon');
 const on = document.querySelector('.fas.fa-video');
 const off = document.querySelector('.fas.fa-video-slash');
 const camera = document.querySelector('.camera');
+const name = document.querySelector('.name');
+const percent = document.querySelector('.percent');
+const description = document.querySelector('.description');
 
-icon.addEventListener('click',() => {
-    on.classList.toggle('invisible');
-    off.classList.toggle('invisible');
+const URL = './model/';
+
+let model, webcam, maxPredictions;
+
+icon.addEventListener('click', async () => {
+  on.classList.toggle('invisible');
+  off.classList.toggle('invisible');
+
+  if (on.classList.length === 2) {
+    await webcam.pause();
+  } else {
+    await webcam.play();
+    window.requestAnimationFrame(loop);
+  }
 });
 
-const URL = "./model/";
-
-let model, webcam, labelContainer, maxPredictions;
-
-// Load the image model and setup the webcam
 async function init() {
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
+  const modelURL = URL + 'model.json';
+  const metadataURL = URL + 'metadata.json';
 
-    // load the model and metadata
-    // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
-    // or files from your local hard drive
-    // Note: the pose library adds "tmImage" object to your window (window.tmImage)
-    model = await tmImage.load(modelURL, metadataURL);
-    maxPredictions = model.getTotalClasses();
+  model = await tmImage.load(modelURL, metadataURL);
+  maxPredictions = model.getTotalClasses();
 
-    // Convenience function to setup a webcam
-    const flip = true; // whether to flip the webcam
-    webcam = new tmImage.Webcam(480, 480, flip); // width, height, flip
-    await webcam.setup();
-    // await webcam.play();
-    window.requestAnimationFrame(loop);
+  const flip = true;
+  webcam = new tmImage.Webcam(380, 380, flip);
+  await webcam.setup();
 
-    // append elements to the DOM
-    camera.appendChild(webcam.canvas);
-    // labelContainer = document.getElementById("label-container");
-    // for (let i = 0; i < maxPredictions; i++) { // and class labels
-    //    labelContainer.appendChild(document.createElement("div"));
-    // }
+  camera.appendChild(webcam.canvas);
 }
 
 async function loop() {
-    webcam.update(); // update the webcam frame
-    // await predict();
-    window.requestAnimationFrame(loop);
+  webcam.update();
+  await predict();
+  window.requestAnimationFrame(loop);
+}
+
+init();
+
+async function predict() {
+  const prediction = await model.predict(webcam.canvas);
+
+  for (let i = 0; i < maxPredictions; i++) {
+    const className = prediction[i].className;
+    const probability = prediction[i].probability.toFixed(2) * 100;
+
+    const data = {
+      Me: 'Me에 대한 설명을 적어볼까요?',
+      Delete: 'Delete에 대한 설명을 적어볼까요?',
+    };
+
+    if (probability >= 75) {
+      if (name.innerHTML !== className) {
+        name.innerHTML = className;
+        description.innerHTML = data[className];
+      }
+
+      if (percent.innerHTML !== probability + '%') {
+        percent.innerHTML = probability + '%';
+      }
+    }
+  }
 }
