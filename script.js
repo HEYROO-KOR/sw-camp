@@ -38,3 +38,9 @@ async function init() {
     //    labelContainer.appendChild(document.createElement("div"));
     // }
 }
+
+async function loop() {
+    webcam.update(); // update the webcam frame
+    // await predict();
+    window.requestAnimationFrame(loop);
+}
