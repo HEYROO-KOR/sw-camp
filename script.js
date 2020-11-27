@@ -52,9 +52,9 @@ async function predict() {
     const probability = prediction[i].probability.toFixed(2) * 100;
 
     const data = {
-      Robert_Downey_Jr: 'Robert_Downey_Jr',
-      Christopher_Robert_Evans: 'Christopher_Robert_Evans',
-      Chris_Hemsworth: 'Chris_Hemsworth',
+      Robert_Downey_Jr: 'Robert Downey Jr',
+      Christopher_Robert_Evans: 'Christopher Robert Evans',
+      Chris_Hemsworth: 'Chris Hemsworth',
     };
 
     if (probability >= 75) {
