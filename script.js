@@ -52,8 +52,9 @@ async function predict() {
     const probability = prediction[i].probability.toFixed(2) * 100;
 
     const data = {
-      Me: 'Me에 대한 설명을 적어볼까요?',
-      Delete: 'Delete에 대한 설명을 적어볼까요?',
+      Robert Downey Jr: 'Robert Downey Jr에 대한 설명을 적어볼까요?',
+      Steve Rogers: 'Steve Rogers에 대한 설명을 적어볼까요?',
+      Chris Hemsworth: 'Chris Hemsworth에 대한 설명을 적어볼까요?',
     };
 
     if (probability >= 75) {
